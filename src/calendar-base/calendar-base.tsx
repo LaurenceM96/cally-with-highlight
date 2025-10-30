@@ -100,6 +100,10 @@ export const props = {
     type: Function,
     value: (date: Date) => false,
   },
+  isDateHighlighted: {
+    type: Function,
+    value: (date: Date) => false,
+  },
   formatWeekday: {
     type: String,
     value: (): "narrow" | "short" => "narrow",

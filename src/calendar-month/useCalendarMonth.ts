@@ -31,6 +31,7 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
   const {
     firstDayOfWeek,
     isDateDisallowed,
+    isDateHighlighted,
     min,
     max,
     today,
@@ -116,6 +117,7 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     const isToday = date.equals(todaysDate);
     const asDate = toDate(date);
     const isDisallowed = isDateDisallowed?.(asDate);
+    const isHighlighted = isDateHighlighted?.(asDate);
     const isDisabled = !inRange(date, min, max);
 
     let parts = "";
@@ -147,6 +149,8 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
       isInMonth ? (isSelected ? "selected" : "") : "outside"
     } ${
       isDisallowed ? "disallowed" : ""
+    } ${
+      isHighlighted ? "highlighted" : ""
     } ${
       isToday ? "today" : ""
     } ${
