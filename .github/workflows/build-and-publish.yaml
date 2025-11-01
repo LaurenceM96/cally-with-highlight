@@ -39,7 +39,7 @@ jobs:
           cp LICENSE ../built-branch/ 2>/dev/null || true
 
           cd ../built-branch
-          git init
+          git init -b main
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .
