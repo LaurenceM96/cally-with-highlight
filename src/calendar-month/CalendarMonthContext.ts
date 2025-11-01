@@ -11,6 +11,7 @@ interface CalendarContextBase {
   getDayParts?: (date: Date) => string;
   page: { start: PlainYearMonth; end: PlainYearMonth };
   focusedDate: PlainDate;
+  highlightRanges: [PlainDate, PlainDate][]
   showOutsideDays?: boolean;
   locale?: string;
   formatWeekday: "narrow" | "short";

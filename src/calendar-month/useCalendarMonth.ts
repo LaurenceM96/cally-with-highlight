@@ -31,13 +31,13 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
   const {
     firstDayOfWeek,
     isDateDisallowed,
-    isDateHighlighted,
     min,
     max,
     today,
     page,
     locale,
     focusedDate,
+    highlightRanges,
     formatWeekday,
   } = context;
 
@@ -117,17 +117,23 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     const isToday = date.equals(todaysDate);
     const asDate = toDate(date);
     const isDisallowed = isDateDisallowed?.(asDate);
-    const isHighlighted = isDateHighlighted?.(asDate);
     const isDisabled = !inRange(date, min, max);
 
     let parts = "";
     let isSelected: boolean | undefined;
+    let prevSelected: boolean | undefined;
+    let nextSelected: boolean | undefined;
+
+    const prevDate = date.add({ days: -1 });
+    const nextDate = date.add({ days: 1 });
 
     if (context.type === "range") {
       const [start, end] = context.value;
       const isRangeStart = start?.equals(date);
       const isRangeEnd = end?.equals(date);
       isSelected = start && end && inRange(date, start, end);
+      prevSelected = start && end && inRange(prevDate, start, end);
+      nextSelected = start && end && inRange(nextDate, start, end);
 
       // prettier-ignore
       parts = `${
@@ -139,8 +145,35 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
       }`;
     } else if (context.type === "multi") {
       isSelected = context.value.some((d) => d.equals(date));
+      prevSelected = context.value.some((d) => d.equals(prevDate));
+      nextSelected = context.value.some((d) => d.equals(nextDate));
     } else {
       isSelected = context.value?.equals(date);
+      prevSelected = context.value?.equals(prevDate);
+      nextSelected = context.value?.equals(nextDate);
+    }
+
+    let highlightParts = "";
+
+    if (context.highlightRanges?.length > 0 && !isSelected) {
+      for (const highlightRange of context.highlightRanges) {
+        const [start, end] = highlightRange;
+        const isRangeStart = start?.equals(date);
+        const isRangeEnd = end?.equals(date);
+        const isHighlighted = start && end && inRange(date, start, end);
+
+        if (isHighlighted) {
+          // prettier-ignore
+          highlightParts = `${
+              isRangeStart || (isHighlighted && prevSelected) ? "highlight-start" : ""
+          } ${
+              isRangeEnd || (isHighlighted && nextSelected) ? "highlight-end" : ""
+          } ${
+              isHighlighted && !isRangeStart && !isRangeEnd && !prevSelected && !nextSelected ? "highlight-inner" : ""
+          }`;
+        }
+      }
+
     }
 
     // prettier-ignore
@@ -150,15 +183,13 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     } ${
       isDisallowed ? "disallowed" : ""
     } ${
-      isHighlighted ? "highlighted" : ""
-    } ${
       isToday ? "today" : ""
     } ${
       context.getDayParts?.(asDate) ?? ""
     }`;
 
     return {
-      part: `${commonParts} ${parts}`,
+      part: `${commonParts} ${parts} ${highlightParts}`,
       tabindex: isInMonth && isFocusedDay ? 0 : -1,
       disabled: isDisabled,
       "aria-disabled": isDisallowed ? "true" : undefined,

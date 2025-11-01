@@ -46,6 +46,7 @@ export function CalendarBase(
 ) {
   const start = toDate(props.page.start);
   const end = toDate(props.page.end);
+  console.log("CalendarBase", props);
 
   return (
     <div role="group" aria-labelledby="h" part="container">
@@ -100,10 +101,6 @@ export const props = {
     type: Function,
     value: (date: Date) => false,
   },
-  isDateHighlighted: {
-    type: Function,
-    value: (date: Date) => false,
-  },
   formatWeekday: {
     type: String,
     value: (): "narrow" | "short" => "narrow",
@@ -131,6 +128,10 @@ export const props = {
   focusedDate: {
     type: String,
     value: (): string | undefined => undefined,
+  },
+  highlightRanges: {
+    type: String,
+    value: "",
   },
   pageBy: {
     type: String,

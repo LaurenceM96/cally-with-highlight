@@ -7,7 +7,7 @@ import {
   useRef,
 } from "atomico";
 import { PlainDate, PlainYearMonth } from "../utils/temporal.js";
-import { useDateProp, useDateFormatter } from "../utils/hooks.js";
+import {useDateProp, useDateFormatter, useHighlightRangesProp} from "../utils/hooks.js";
 import { clamp, toDate, getToday } from "../utils/date.js";
 
 export type Pagination = "single" | "months";
@@ -112,9 +112,11 @@ export function useCalendarBase({
   focusedDate: focusedDateProp,
   setFocusedDate,
 }: CalendarBaseOptions) {
+  console.log("useCalendarBase");
   const [min] = useDateProp("min");
   const [max] = useDateProp("max");
   const [today] = useDateProp("today");
+  const [highlightRanges] = useHighlightRangesProp("highlightRanges");
   const dispatchFocusDay = useEvent<Date>("focusday");
   const dispatch = useEvent("change");
 
@@ -156,6 +158,7 @@ export function useCalendarBase({
     formatVerbose: useDateFormatter(formatVerboseOptions, locale),
     page,
     focusedDate,
+    highlightRanges,
     dispatch,
     onFocus(e: CustomEvent<PlainDate>) {
       e.stopPropagation();
