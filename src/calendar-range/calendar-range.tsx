@@ -21,7 +21,6 @@ export const CalendarRange = c(
     onFocusDay: CustomEvent<Date>;
     focus: (options?: CalendarFocusOptions) => void;
   }> => {
-    console.log("CalendarRange", props);
     const [value, setValue] = useDateRangeProp("value");
     const [focusedDate = value[0], setFocusedDate] = useDateProp("focusedDate");
     const calendar = useCalendarBase({

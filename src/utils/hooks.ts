@@ -16,9 +16,7 @@ function safeFrom<T extends PlainDate | PlainYearMonth>(
 export function useDateProp<T extends PlainDate | undefined = PlainDate>(
   prop: string
 ) {
-  console.log("useDateProp", prop);
   const [value, setValue] = useProp<string>(prop);
-  console.log("useDateProp", prop, value);
 
   const date = useMemo(() => safeFrom(PlainDate, value), [value]);
   const setDate = (date: T) => setValue(date?.toString());
@@ -43,9 +41,7 @@ export function useDateRangeProp(prop: string) {
 }
 
 export function useHighlightRangesProp(prop: string) {
-  console.log("useHighlightRangesProp", prop);
   const [value = "", setValue] = useProp<string>(prop);
-  console.log("useHighlightRangesProp", prop, value);
 
   // Parse the string into an array of [PlainDate, PlainDate]
   const ranges = useMemo((): [PlainDate, PlainDate][] => {
@@ -54,7 +50,6 @@ export function useHighlightRangesProp(prop: string) {
     return value
         .split("+")
         .map((segment: string) => {
-          console.log("useHighlightRangesProp Mapping", segment);
           const [s, e] = segment.split("/");
           const start = safeFrom(PlainDate, s);
           const end = safeFrom(PlainDate, e);

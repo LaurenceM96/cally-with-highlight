@@ -112,7 +112,6 @@ export function useCalendarBase({
   focusedDate: focusedDateProp,
   setFocusedDate,
 }: CalendarBaseOptions) {
-  console.log("useCalendarBase");
   const [min] = useDateProp("min");
   const [max] = useDateProp("max");
   const [today] = useDateProp("today");

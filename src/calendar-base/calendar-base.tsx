@@ -46,7 +46,6 @@ export function CalendarBase(
 ) {
   const start = toDate(props.page.start);
   const end = toDate(props.page.end);
-  console.log("CalendarBase", props);
 
   return (
     <div role="group" aria-labelledby="h" part="container">
