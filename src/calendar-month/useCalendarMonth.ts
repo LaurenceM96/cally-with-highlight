@@ -37,7 +37,6 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     page,
     locale,
     focusedDate,
-    highlightRanges,
     formatWeekday,
   } = context;
 
@@ -147,6 +146,16 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
       isSelected = context.value.some((d) => d.equals(date));
       prevSelected = context.value.some((d) => d.equals(prevDate));
       nextSelected = context.value.some((d) => d.equals(nextDate));
+    } else if (context.type === "highlight") {
+      const [start, end] = context.value;
+      isSelected = start && end && inRange(date, start, end);
+      prevSelected = start && end && inRange(prevDate, start, end);
+      nextSelected = start && end && inRange(nextDate, start, end);
+
+      // prettier-ignore
+      parts = `${
+        isSelected ? "highlight-selected" : ""
+      }`;
     } else {
       isSelected = context.value?.equals(date);
       prevSelected = context.value?.equals(prevDate);
@@ -155,7 +164,41 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
 
     let highlightParts = "";
 
-    if (context.highlightRanges?.length > 0 && !isSelected) {
+    // For highlight calendar type, show highlight groups
+    if (context.type === "highlight" && context.highlightGroups?.length > 0) {
+      for (let groupIndex = 0; groupIndex < context.highlightGroups.length; groupIndex++) {
+        const group = context.highlightGroups[groupIndex];
+        if (!group) continue;
+
+        for (const [start, end] of group) {
+          const isRangeStart = start?.equals(date);
+          const isRangeEnd = end?.equals(date);
+          const isHighlighted = start && end && inRange(date, start, end);
+
+          // Check if prev/next dates are in the same group
+          let prevInGroup = false;
+          let nextInGroup = false;
+          for (const [s, e] of group) {
+            if (s && e && inRange(prevDate, s, e)) prevInGroup = true;
+            if (s && e && inRange(nextDate, s, e)) nextInGroup = true;
+          }
+
+          if (isHighlighted) {
+            // prettier-ignore
+            highlightParts += ` highlight-group-${groupIndex} ${
+                isRangeStart || (isHighlighted && !prevInGroup) ? `highlight-start` : ""
+            } ${
+                isRangeEnd || (isHighlighted && !nextInGroup) ? `highlight-end` : ""
+            } ${
+                isHighlighted && !isRangeStart && !isRangeEnd && prevInGroup && nextInGroup ? `highlight-inner` : ""
+            }`;
+            break; // Only apply first matching group
+          }
+        }
+      }
+    }
+    // For other calendar types with highlightRanges
+    else if (context.highlightRanges?.length > 0 && !isSelected) {
       for (const highlightRange of context.highlightRanges) {
         const [start, end] = highlightRange;
         const isRangeStart = start?.equals(date);
@@ -179,7 +222,7 @@ export function useCalendarMonth({ props, context }: UseCalendarMonthOptions) {
     // prettier-ignore
     const commonParts = `button day day-${asDate.getDay()} ${
       // we don't want outside days to ever be shown as selected
-      isInMonth ? (isSelected ? "selected" : "") : "outside"
+      isInMonth ? ((isSelected && !(context.type === "highlight")) ? "selected" : "") : "outside"
     } ${
       isDisallowed ? "disallowed" : ""
     } ${

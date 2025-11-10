@@ -32,10 +32,17 @@ export interface CalendarMultiContext extends CalendarContextBase {
   value: PlainDate[];
 }
 
+export interface CalendarHighlightContext extends CalendarContextBase {
+  type: "highlight";
+  value: [PlainDate, PlainDate] | [];
+  highlightGroups: [PlainDate, PlainDate][][];
+}
+
 export type CalendarContextValue =
   | CalendarDateContext
   | CalendarRangeContext
-  | CalendarMultiContext;
+  | CalendarMultiContext
+  | CalendarHighlightContext;
 
 const t = getToday();
 

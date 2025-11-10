@@ -2,8 +2,9 @@ import { CalendarMonth } from "./calendar-month/calendar-month";
 import { CalendarDate } from "./calendar-date/calendar-date";
 import { CalendarRange } from "./calendar-range/calendar-range";
 import { CalendarMulti } from "./calendar-multi/calendar-multi";
+import { CalendarHighlight } from "./calendar-highlight/calendar-highlight";
 
-export { CalendarMonth, CalendarDate, CalendarRange, CalendarMulti };
+export { CalendarMonth, CalendarDate, CalendarRange, CalendarMulti, CalendarHighlight };
 
 import type { AtomicoThis } from "atomico/types/dom.js";
 
@@ -20,3 +21,4 @@ export type CalendarMonthProps = ComponentProps<typeof CalendarMonth>;
 export type CalendarDateProps = ComponentProps<typeof CalendarDate>;
 export type CalendarRangeProps = ComponentProps<typeof CalendarRange>;
 export type CalendarMultiProps = ComponentProps<typeof CalendarMulti>;
+export type CalendarHighlightProps = ComponentProps<typeof CalendarHighlight>;

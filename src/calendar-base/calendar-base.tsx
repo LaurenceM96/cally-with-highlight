@@ -4,6 +4,7 @@ import {
   type CalendarDateContext,
   type CalendarMultiContext,
   type CalendarRangeContext,
+  type CalendarHighlightContext,
 } from "../calendar-month/CalendarMonthContext.js";
 import { reset, vh } from "../utils/styles.js";
 import { toDate, type DaysOfWeek } from "../utils/date.js";
@@ -24,6 +25,7 @@ interface CalendarBaseProps {
 interface CalendarRangeProps extends CalendarBaseProps, CalendarRangeContext {}
 interface CalendarDateProps extends CalendarBaseProps, CalendarDateContext {}
 interface CalendarMultiProps extends CalendarBaseProps, CalendarMultiContext {}
+interface CalendarHighlightProps extends CalendarBaseProps, CalendarHighlightContext {}
 
 function Button(props: {
   name: string;
@@ -42,7 +44,7 @@ function Button(props: {
 }
 
 export function CalendarBase(
-  props: CalendarDateProps | CalendarRangeProps | CalendarMultiProps
+  props: CalendarDateProps | CalendarRangeProps | CalendarMultiProps | CalendarHighlightProps
 ) {
   const start = toDate(props.page.start);
   const end = toDate(props.page.end);

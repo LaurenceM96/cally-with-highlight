@@ -69,6 +69,57 @@ export function useHighlightRangesProp(prop: string) {
   return [ranges, setRanges] as const;
 }
 
+export function useHighlightGroupsProp(prop: string) {
+  const [value = ""] = useProp<string>(prop);
+
+  return useMemo((): [PlainDate, PlainDate][][] => {
+    if (!value) return [];
+
+    // Parse format: "0:2024-11-01/2024-11-05+2024-11-10/2024-11-20|2:2024-12-01/2024-12-05"
+    // Split by | to separate groups, each group can have an optional index prefix
+    const groups: [PlainDate, PlainDate][][] = [];
+
+    for (const groupStr of value.split("|")) {
+      if (!groupStr.trim()) continue;
+
+      // Check if group has an index prefix (e.g., "0:" or "2:")
+      const colonIndex = groupStr.indexOf(":");
+      let groupIndex: number | undefined;
+      let rangesStr = groupStr;
+
+      if (colonIndex > 0) {
+        const indexPart = groupStr.substring(0, colonIndex);
+        const parsedIndex = parseInt(indexPart, 10);
+        if (!isNaN(parsedIndex) && parsedIndex >= 0) {
+          groupIndex = parsedIndex;
+          rangesStr = groupStr.substring(colonIndex + 1);
+        }
+      }
+
+      const ranges = rangesStr
+        .split("+")
+        .map((segment: string) => {
+          const [s, e] = segment.split("/");
+          const start = safeFrom(PlainDate, s);
+          const end = safeFrom(PlainDate, e);
+          return start && end ? [start, end] as [PlainDate, PlainDate] : null;
+        })
+        .filter((r: any): r is [PlainDate, PlainDate] => r !== null);
+
+      if (ranges.length > 0) {
+        // If index is specified, place at that index; otherwise append
+        if (groupIndex !== undefined) {
+          groups[groupIndex] = ranges;
+        } else {
+          groups.push(ranges);
+        }
+      }
+    }
+
+    return groups;
+  }, [value]);
+}
+
 export function useDateMultiProp(prop: string) {
   const [value = "", setValue] = useProp<string>(prop);
 
